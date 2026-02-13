@@ -1,29 +1,23 @@
 #!/bin/bash
 
-REPORT="$1"
-CFG="/etc/ssh/sshd_config"
+echo
+echo "=== SSH Hardening Check ==="
 
-echo "---- SSH Policy ----" >> "$REPORT"
+FILE="/etc/ssh/sshd_config"
 
-if [ ! -f "$CFG" ]; then
-    echo "SSH config not found." >> "$REPORT"
-    echo >> "$REPORT"
+if [ ! -f "$FILE" ]; then
+    echo "SSH config not found"
     exit 0
 fi
 
-root_login=$(grep -Ei "^PermitRootLogin" "$CFG" | tail -1 | awk '{print $2}')
-pass_auth=$(grep -Ei "^PasswordAuthentication" "$CFG" | tail -1 | awk '{print $2}')
+ROOT_LOGIN=$(grep -i "^PermitRootLogin" "$FILE" | tail -n 1 | awk '{print $2}')
+PASS_AUTH=$(grep -i "^PasswordAuthentication" "$FILE" | tail -n 1 | awk '{print $2}')
 
-if [ "$ALLOW_ROOT_SSH" = "no" ] && [ "$root_login" = "yes" ]; then
-    echo "FAIL: Root SSH login is enabled" >> "$REPORT"
+echo "PermitRootLogin: ${ROOT_LOGIN:-not set}"
+echo "PasswordAuthentication: ${PASS_AUTH:-not set}"
+
+if [ "$ROOT_LOGIN" = "yes" ]; then
+    echo "WARN: Root login over SSH enabled"
 else
-    echo "PASS: Root SSH policy OK" >> "$REPORT"
+    echo "PASS: Root login disabled or not set"
 fi
-
-if [ "$ALLOW_PASSWORD_AUTH" = "no" ] && [ "$pass_auth" = "yes" ]; then
-    echo "FAIL: SSH password authentication enabled" >> "$REPORT"
-else
-    echo "PASS: SSH password auth policy OK" >> "$REPORT"
-fi
-
-echo >> "$REPORT"
