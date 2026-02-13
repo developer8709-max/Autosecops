@@ -38,4 +38,13 @@ DevSecOps and compliance auditing systems.
 
 ---
 
-## 🧩 Architecture
+## Security Best Practice Validation
+
+It includes specific checks such as:
+User and privilege policies
+
+-SSH hardening and secure SSH config
+-Critical system file permission checks
+-Detecting insecure or unwanted services
+-Using these checks makes your system more
+-resistant to accidental misconfiguration. 
