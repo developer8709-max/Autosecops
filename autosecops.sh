@@ -9,7 +9,7 @@ source "$BASE_DIR/baseline/baseline.conf"
 
 echo "========================================" > "$REPORT"
 echo " AutoSecOps Compliance Report"          >> "$REPORT"
-echo " Created by Murari Singh"               >> "$REPORT"
+echo "  Created by Murari Singh"               >> "$REPORT"
 echo "========================================" >> "$REPORT"
 echo "Date: $(date)"                          >> "$REPORT"
 echo                                        >> "$REPORT"
