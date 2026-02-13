@@ -1,32 +1,19 @@
-#!/bin/bash
+##!/bin/bash
 
-REPORT="$1"
+echo
+echo "=== Insecure Service Check ==="
 
-echo "---- Unwanted Services ----" >> "$REPORT"
+if ! command -v systemctl >/dev/null 2>&1; then
+    echo "systemctl not available on this system"
+    exit 0
+fi
 
-check_service() {
-
-    svc="$1"
-    allowed="$2"
-
-    if ! command -v systemctl >/dev/null; then
-        echo "systemctl not available." >> "$REPORT"
-        return
-    fi
-
+for svc in telnet ftp rsh
+do
     if systemctl list-unit-files | grep -q "^$svc"; then
-        if [ "$allowed" = "no" ]; then
-            echo "WARN: $svc service exists on system" >> "$REPORT"
-        else
-            echo "INFO: $svc present (allowed)" >> "$REPORT"
-        fi
+        STATE=$(systemctl is-enabled "$svc" 2>/dev/null)
+        echo "$svc service: $STATE"
     else
-        echo "PASS: $svc not present" >> "$REPORT"
+        echo "$svc service: not installed"
     fi
-}
-
-check_service telnet.service "$CHECK_TELNET"
-check_service ftp.service    "$CHECK_FTP"
-check_service rsh.service    "$CHECK_RSH"
-
-echo >> "$REPORT"
+done
