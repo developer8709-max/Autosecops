@@ -1,28 +1,22 @@
 #!/bin/bash
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPORT="$BASE_DIR/reports/report-$(date +%F_%H%M%S).txt"
 
-mkdir -p "$BASE_DIR/reports"
+REPORT_DIR="$BASE_DIR/reports"
+mkdir -p "$REPORT_DIR"
 
-source "$BASE_DIR/baseline/baseline.conf"
+TIME=$(date +"%Y%m%d_%H%M%S")
+REPORT="$REPORT_DIR/autosecops_report_$TIME.txt"
 
-echo "========================================" > "$REPORT"
-echo " AutoSecOps Compliance Report"          >> "$REPORT"
-echo "  Created by Murari Singh"               >> "$REPORT"
-echo "========================================" >> "$REPORT"
-echo "Date: $(date)"                          >> "$REPORT"
-echo                                        >> "$REPORT"
+echo "AutoSecOps – Linux Security Audit" > "$REPORT"
+echo "Created by Murari Singh" >> "$REPORT"
+echo "Date: $(date)" >> "$REPORT"
+echo "----------------------------------" >> "$REPORT"
 
-for m in users ssh permissions services
-do
-    if [ -f "$BASE_DIR/modules/$m.sh" ]; then
-        bash "$BASE_DIR/modules/$m.sh" "$REPORT"
-    fi
-done
-
-echo >> "$REPORT"
-echo "Compliance scan finished." >> "$REPORT"
+bash "$BASE_DIR/users.sh"     >> "$REPORT"
+bash "$BASE_DIR/ssh.sh"       >> "$REPORT"
+bash "$BASE_DIR/permission.sh" >> "$REPORT"
+bash "$BASE_DIR/services.sh"  >> "$REPORT"
 
 echo
 echo "Report generated:"
